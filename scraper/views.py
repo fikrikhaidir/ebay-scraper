@@ -1,9 +1,22 @@
-import scrapy
+from django.shortcuts import render,redirect
+from django.contrib.auth import authenticate,login
+import requests
+from bs4 import BeautifulSoup
 
 def home(request):
-    response = scrapy.Request('https://www.ebay.com/sch/i.html?_from=R40&_trksid=m570.l1313&_nkw=apple&_sacat=0')
-    response = response.css('h3.s-item__title::text').extract()
+    resArray = []
+    res = requests.get('https://www.ebay.com/sch/i.html?_from=R40&_trksid=m570.l1313&_nkw=dildo&_sacat=0')
+    soup = BeautifulSoup(res.content)
+    for title in soup.select('.s-item__title'):
+        resArray.append({'name':title.text,'price':''})
+    count=0
+    for price in soup.select('.s-item__price'):
+        try:
+            resArray[count]['price'] = price.text
+            count+=1
+        except IndexError:
+            pass
     context =   {
-        'items' : response,
+        'data' : resArray,
     }
     return render(request,'index.html',context)
