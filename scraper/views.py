@@ -43,3 +43,6 @@ def home(request):
 
 def cart(request):
     pass
+
+def add (request,number):
+    pass
